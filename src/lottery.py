@@ -7,12 +7,12 @@ import config
 import embedfromjson
 import bot
 
-def checkRateLimit(user, server):
+def checkRateLimit(user, server):   #Check if a user is ratelimited
     try:
-        lastUsed = server.rateList[user]
-        dt = datetime.utcnow() - lastUsed
-        minutes = (dt.seconds % 3600) // 60
-        if minutes < server.rateLimit:
+        lastUsed = server.rateList[user]    #Get last used date
+        dt = datetime.utcnow() - lastUsed   #Difference in time
+        minutes = (dt.seconds % 3600) // 60     #minutes
+        if minutes < server.rateLimit:  #Check if its less
             return True
         else:
             return False
@@ -24,16 +24,18 @@ def setRatelimit(user, server):
     server.save()
 
 def play(params, user, server):
-    if checkRateLimit(user, server):
-        return "Ratelimited."
+    if checkRateLimit(user, server):    #Check if user is ratelimited
+        return embedfromjson.rateLimited(user);
 
-    result = random.choices(params[0], cum_weights=params[1])[0]
+    result = random.choices(params[0], cum_weights=params[1])[0]    #Choose outcome
     
-    setRatelimit(user, server);
+    setRatelimit(user, server);     #Set new ratelimit
 
-    if result == "lose":
+    print(result)
+    if result == "lose":    #Player lost
         return embedfromjson.lose(user)
-    else:
+    else:                   #Player won
         metadata = { "server": server.name, "prize": result[0], "hostId": str(result[1]) }
         metadata["user"] = bot.bot.client.get_user(user).name
+
         return embedfromjson.win(metadata)
