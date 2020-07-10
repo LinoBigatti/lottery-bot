@@ -3,6 +3,7 @@
 import config
 import log
 import lottery
+import server as server_
 
 import discord
 import sys
@@ -43,7 +44,7 @@ async def on_message(message):  #Handle messages
         server = config.servers[message.guild.id]
         rawCommand = message.content[len(bot.prefix):].lower()    #Take prefix out
         
-        if rawCommand == "lotto" or rawCommand == "lottery" and message.channel.id == server.lotteryChannel:    #Play the lottery
+        if (rawCommand == "lotto" or rawCommand == "lottery") and message.channel.id == server.lotteryChannel:    #Play the lottery
             await message.channel.send(lottery.play(server.lottoParams, message.author.id, server))
         elif rawCommand.startswith("set "):
             if not message.author.permissions_in(message.channel).manage_guild: #User needs manage guild
@@ -71,4 +72,17 @@ async def on_message(message):  #Handle messages
                 weight = params[len(prize[0]) + 1:]
                 
                 await message.channel.send(server.addPrize(prize[0][1:][:-1], weight))
+            if action.startswith("delete "):
+                i = action[7:]
 
+                await message.channel.send(server.deletePrize(i))
+            if action.startswith("list"):
+                await message.channel.send(server.listPrizes())
+
+@bot.client.event
+async def on_guild_join(guild):
+    params = {"id": guild.id, "lotto-channel": 0, "rate": 0, "rate-list": {}, "lotto-parameters": [["lose"], [1000000]]}
+    tmpServer = server_.server(params)
+
+    tmpServer.save()
+    config.servers[guild.id] = tmpServer
