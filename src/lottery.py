@@ -1,9 +1,11 @@
 #Play the lottery
 
 import random
-import config
 from datetime import datetime
 
+import config
+import embedfromjson
+import bot
 
 def checkRateLimit(user, server):
     try:
@@ -30,6 +32,8 @@ def play(params, user, server):
     setRatelimit(user, server);
 
     if result == "lose":
-        return "You lost"
+        return embedfromjson.lose(user)
     else:
-        return result
+        metadata = { "server": server.name, "prize": result[0], "hostId": str(result[1]) }
+        metadata["user"] = bot.bot.client.get_user(user).name
+        return embedfromjson.win(metadata)

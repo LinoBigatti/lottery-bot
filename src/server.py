@@ -15,10 +15,12 @@ class server:
         self.rateLimit = params["rate"]
         self.rateList = params["rate-list"]
         self.lottoParams = params["lotto-parameters"]
+        self.name = params["name"]
 
     def save(self):
         params = {}
         params["id"] = self.id
+        params["name"] = self.name
         params["lotto-channel"] = self.lotteryChannel
         params["rate"] = self.rateLimit
         params["rate-list"] = self.rateList
@@ -65,7 +67,7 @@ class server:
 
         self.save()
 
-        return "Prize \"" + prize + "\" added with a probability of " + weight + "/1,000,000 at index " + str(place) + "." 
+        return "Prize \"" + prize[0] + "\" added with a probability of " + weight + "/1,000,000 at index " + str(place) + "." 
 
     def deletePrize(self, i_):
         i = int(i_)
@@ -73,12 +75,12 @@ class server:
         self.lottoParams[1].pop(i)
         self.save()
 
-        return "Prize \"" + deleted + "\" deleted."
+        return "Prize \"" + deleted[0] + "\" deleted."
 
     def listPrizes(self):
         list_ = "Current prizes:\n"
         for i in range(len(self.lottoParams[0])):
-            list_ += '\t"' + self.lottoParams[0][i] + '": '
+            list_ += '\t"' + self.lottoParams[0][i][0] + '": '
             list_ += str(self.lottoParams[1][i]) + "/1,000,000 chance. Id: " + str(i)
             list_ += "\n"
 

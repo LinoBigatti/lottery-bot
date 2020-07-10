@@ -45,7 +45,7 @@ async def on_message(message):  #Handle messages
         rawCommand = message.content[len(bot.prefix):].lower()    #Take prefix out
         
         if (rawCommand == "lotto" or rawCommand == "lottery") and message.channel.id == server.lotteryChannel:    #Play the lottery
-            await message.channel.send(lottery.play(server.lottoParams, message.author.id, server))
+            await message.channel.send(embed=lottery.play(server.lottoParams, message.author.id, server))
         elif rawCommand.startswith("set "):
             if not message.author.permissions_in(message.channel).manage_guild: #User needs manage guild
                 await message.channel.send("ERROR: You need to be server admin.")
@@ -69,9 +69,9 @@ async def on_message(message):  #Handle messages
             if action.startswith("add "):
                 params = action[4:]
                 prize = re.findall(r'".+?"', params)
-                weight = params[len(prize[0]) + 1:]
+                weight, host = params[len(prize[0]) + 1:].split(' ')
                 
-                await message.channel.send(server.addPrize(prize[0][1:][:-1], weight))
+                await message.channel.send(server.addPrize([prize[0][1:][:-1], host], weight))
             if action.startswith("delete "):
                 i = action[7:]
 
@@ -81,7 +81,7 @@ async def on_message(message):  #Handle messages
 
 @bot.client.event
 async def on_guild_join(guild):
-    params = {"id": guild.id, "lotto-channel": 0, "rate": 0, "rate-list": {}, "lotto-parameters": [["lose"], [1000000]]}
+    params = {"id": guild.id, "name": guild.name, "lotto-channel": 0, "rate": 0, "rate-list": {}, "lotto-parameters": [["lose"], [1000000]]}
     tmpServer = server_.server(params)
 
     tmpServer.save()
