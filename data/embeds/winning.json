@@ -1,1 +1,9 @@
-{ "color": "", "header": {} }
+{ 	
+	"description": "You've won {prize}!\nDM {host} to claim your prize!", 
+	"author": { "name": "Congratulations {user}!", 
+				"icon_url": "https://i.imgur.com/Zh77YKC.png" }, 
+	"footer": { "text": "{server} - Lottery", 
+				"icon_url": "https://i.imgur.com/Zh77YKC.png" }, 
+	"color": 7506394, 
+	"image": "https://media1.tenor.com/images/353e073de7e89b58bc925bde8ea21b2e/tenor.gif?itemid=17306695" 
+}
