@@ -1,4 +1,4 @@
 { 
-	"description": "I'm sorry {user}, but you are ratelimited.", 
+	"description": "I'm sorry {user}, but you are ratelimited. Come back in {ratelimit}.", 
 	"color": 53380 
 }

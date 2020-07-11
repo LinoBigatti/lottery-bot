@@ -31,6 +31,8 @@ class server:       #Server configs
         with open("data/servers/" + str(self.id) + ".json", "w") as f:  #Write to file
             json.dump(params, f, cls=DateTimeEncoder)
 
+        log.success("Saved configuration for server " + str(self.id) + ".")
+
     def setRate(self, rate):    #Set ratelimit
         daysIndex = rate.find('d')
         hoursIndex = rate.find('h')
@@ -56,9 +58,10 @@ class server:       #Server configs
         return "New rate limit: " + str(days) + " days, " + str(hours) + " hours, " + str(minutes) + " minutes. (Total minutes: " + str(self.rateLimit) + ")"
 
     def setChannel(self, channel):  #Set the lottery channel
-        self.channel = channel
+        self.lotteryChannel = channel
         self.save()
 
+        log.info("New lotto channel for server " + str(self.id) + ": " + str(self.lotteryChannel) + ".")
         return "Lottery set to use this channel."
 
     def addPrize(self, prize, weight):      #Add a new prize

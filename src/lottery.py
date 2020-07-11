@@ -1,11 +1,14 @@
 #Play the lottery
 
 import random
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import config
 import embedfromjson
 import bot
+
+def dtToArray(dt):
+    return [dt.days, dt.seconds//3600, (dt.seconds//60)%60]
 
 def checkRateLimit(user, server):   #Check if a user is ratelimited
     try:
@@ -13,25 +16,28 @@ def checkRateLimit(user, server):   #Check if a user is ratelimited
         dt = datetime.utcnow() - lastUsed   #Difference in time
         minutes = (dt.seconds % 3600) // 60     #minutes
         if minutes < server.rateLimit:  #Check if its less
-            return True
+            rateDelta = timedelta(seconds = server.rateLimit * 60)      #Generate the time left
+            minutesLeft = (lastUsed + rateDelta) - datetime.utcnow()
+
+            return dtToArray(minutesLeft)
         else:
-            return False
+            return -1
     except KeyError:
-        return False
+        return -1
 
 def setRatelimit(user, server):
     server.rateList[user] = datetime.utcnow()
     server.save()
 
 def play(params, user, server):
-    if checkRateLimit(user, server):    #Check if user is ratelimited
-        return embedfromjson.rateLimited(user);
+    dt = checkRateLimit(user, server)
+    if dt != -1:    #Check if user is ratelimited
+        return embedfromjson.rateLimited(user, dt);
 
     result = random.choices(params[0], cum_weights=params[1])[0]    #Choose outcome
     
     setRatelimit(user, server);     #Set new ratelimit
-
-    print(result)
+    
     if result == "lose":    #Player lost
         return embedfromjson.lose(user)
     else:                   #Player won

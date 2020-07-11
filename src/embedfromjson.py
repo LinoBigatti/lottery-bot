@@ -54,12 +54,15 @@ def win(metadata):  #Do a winning embed
 
     return embed;
 
-def rateLimited(ping):
+def rateLimited(ping, dt):
     raw = {}
     with open("data/embeds/ratelimited.json", "r") as f:     #Get data
         raw = json.loads(f.read())
 
+    timeString = str(dt[0]) + "d, " + str(dt[1]) + "h, " + str(dt[2]) + "m"
+
     raw["description"] = re.sub(r'{user}', "<@" + str(ping) + ">", raw["description"])  #Replace {user}
+    raw["description"] = re.sub(r'{ratelimit}', timeString, raw["description"])  #Replace {user}
 
     #Build the embed
     embed = discord.Embed(\
