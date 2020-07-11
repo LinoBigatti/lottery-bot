@@ -13,10 +13,18 @@ def dtToArray(dt):
 def checkRateLimit(user, server):   #Check if a user is ratelimited
     try:
         lastUsed = server.rateList[user]    #Get last used date
+
+        if bot.bot.client.get_user(user) in bot.bot.client.get_guild(server.id).premium_subscribers:
+            #User is nitro booster
+            rateLimit = server.rateLimit // 2
+        else:
+            rateLimit = server.rateLimit
+
         dt = datetime.utcnow() - lastUsed   #Difference in time
         minutes = (dt.seconds % 3600) // 60     #minutes
-        if minutes < server.rateLimit:  #Check if its less
-            rateDelta = timedelta(seconds = server.rateLimit * 60)      #Generate the time left
+
+        if minutes < rateLimit:  #Check if its less
+            rateDelta = timedelta(seconds = rateLimit * 60)      #Generate the time left
             minutesLeft = (lastUsed + rateDelta) - datetime.utcnow()
 
             return dtToArray(minutesLeft)
