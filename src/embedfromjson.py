@@ -71,4 +71,7 @@ def rateLimited(ping, dt):
         timestamp = datetime.datetime.now(),\
         color = raw["color"])
 
+    #Set the image
+    embed.set_image(url = raw["image"])
+
     return embed;

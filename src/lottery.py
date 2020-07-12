@@ -8,7 +8,11 @@ import embedfromjson
 import bot
 
 def dtToArray(dt):
-    return [dt.days, dt.seconds//3600, (dt.seconds//60)%60]
+    days = 0            #Hackity
+    if dt.days != -1:
+        days = dt.days
+
+    return [days, dt.seconds//3600, (dt.seconds//60)%60]
 
 def checkRateLimit(user, server):   #Check if a user is ratelimited
     try:

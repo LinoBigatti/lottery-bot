@@ -1,4 +1,5 @@
 { 
 	"description": "I'm sorry {user}, but you are ratelimited. Come back in {ratelimit}.", 
-	"color": 53380 
+	"color": 53380,
+	"image": "https://i.imgur.com/bEb6eWJ.gif"
 }

@@ -70,7 +70,7 @@ class server:       #Server configs
         #Insert it
         self.lottoParams[0].insert(place, prize)
         if place != 0:
-            self.lottoParams[1].insert(place, int(weight) + self.lottoParams[1][place])
+            self.lottoParams[1].insert(place, int(weight) + self.lottoParams[1][place - 1])
         else:
             self.lottoParams[1].insert(place, int(weight))
 
