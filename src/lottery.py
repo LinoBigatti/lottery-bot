@@ -7,31 +7,39 @@ import config
 import embedfromjson
 import bot
 
-def dtToArray(dt):
-    days = 0            #Hackity
-    if dt.days != -1:
-        days = dt.days
+def dtFormat(dt):
+    s = dt.total_seconds()
+    if not s:
+        return "0s"
 
-    return [days, dt.seconds//3600, (dt.seconds//60)%60]
+    m, s_ = divmod(s, 60)
+    h, m = divmod(m, 60)
+    d, h = divmod(h, 24)
+
+    d = str(int(d)) + "d " if d else ''
+    h = str(int(h)) + "h " if h else ''
+    m = str(int(m)) + "m " if m else ''
+    s_ = str(int(s_)) + "s" if s_ else ''
+
+    return (d + h + m + s_).strip()
+
 
 def checkRateLimit(user, server):   #Check if a user is ratelimited
     try:
-        lastUsed = server.rateList[user]    #Get last used date
+        lastUsed = server.rateList[user.id]    #Get last used date
 
-        if bot.bot.client.get_user(user) in bot.bot.client.get_guild(server.id).premium_subscribers:
+        rateLimit = server.rateLimit
+        if user.premium_since:
             #User is nitro booster
-            rateLimit = server.rateLimit // 2
-        else:
-            rateLimit = server.rateLimit
+            rateLimit = rateLimit // 2
 
         dt = datetime.utcnow() - lastUsed   #Difference in time
         minutes = (dt.seconds % 3600) // 60     #minutes
 
         if minutes < rateLimit:  #Check if its less
-            rateDelta = timedelta(seconds = rateLimit * 60)      #Generate the time left
-            minutesLeft = (lastUsed + rateDelta) - datetime.utcnow()
+            t = timedelta(minutes=rateLimit) - dt
 
-            return dtToArray(minutesLeft)
+            return dtFormat(t)
         else:
             return -1
     except KeyError:
@@ -44,16 +52,16 @@ def setRatelimit(user, server):
 def play(params, user, server):
     dt = checkRateLimit(user, server)
     if dt != -1:    #Check if user is ratelimited
-        return embedfromjson.rateLimited(user, dt);
+        return embedfromjson.rateLimited(user.id, dt);
 
     result = random.choices(params[0], cum_weights=params[1])[0]    #Choose outcome
     
-    setRatelimit(user, server);     #Set new ratelimit
+    setRatelimit(user.id, server);     #Set new ratelimit
     
     if result == "lose":    #Player lost
-        return embedfromjson.lose(user)
+        return embedfromjson.lose(user.id)
     else:                   #Player won
         metadata = { "server": server.name, "prize": result[0], "hostId": str(result[1]) }
-        metadata["user"] = bot.bot.client.get_user(user).name
+        metadata["user"] = user.name
 
         return embedfromjson.win(metadata)

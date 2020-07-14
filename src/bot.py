@@ -41,9 +41,9 @@ async def on_message(message):  #Handle messages
     if message.content.startswith(bot.prefix):    #Handle command
         log.info("Bot command called by " + message.author.name + ". Full command: " + message.content)
         
-        try:
+        try:        #Get server config
             server = config.servers[message.guild.id]
-        except KeyError:
+        except KeyError:    #Server not found, create one
             createServerConfig(message.guild)
 
             log.error("Unrecognized server: " + str(message.guild.id))
@@ -54,7 +54,7 @@ async def on_message(message):  #Handle messages
         rawCommand = message.content[len(bot.prefix):].lower()    #Take prefix out
         
         if (rawCommand == "lotto" or rawCommand == "lottery") and message.channel.id == server.lotteryChannel:    #Play the lottery
-            await message.channel.send(embed=lottery.play(server.lottoParams, message.author.id, server))
+            await message.channel.send(embed=lottery.play(server.lottoParams, message.author, server))
         
         elif rawCommand.startswith("set "):     #Set variable command
             if not message.author.permissions_in(message.channel).manage_guild: #User needs manage guild
