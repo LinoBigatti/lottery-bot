@@ -26,7 +26,7 @@ def dtFormat(dt):
 
 def checkRateLimit(user, server):   #Check if a user is ratelimited
     try:
-        lastUsed = server.rateList[user.id]    #Get last used date
+        lastUsed = server.rateList[str(user.id)]    #Get last used date
 
         rateLimit = server.rateLimit
         if user.premium_since:
@@ -46,8 +46,8 @@ def checkRateLimit(user, server):   #Check if a user is ratelimited
         return -1
 
 def setRatelimit(user, server):
-    server.rateList[user] = datetime.utcnow()
-    server.save()
+    server.rateList[str(user)] = datetime.utcnow()
+    server.edit()
 
 def play(params, user, server):
     dt = checkRateLimit(user, server)
