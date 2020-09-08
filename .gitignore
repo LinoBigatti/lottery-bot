@@ -151,3 +151,6 @@ data/servers/*.json
 
 # VIM stuff ig
 *.swp
+
+# Database
+db/

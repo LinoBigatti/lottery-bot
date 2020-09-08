@@ -41,15 +41,7 @@ async def on_message(message):  #Handle messages
     if message.content.startswith(bot.prefix):    #Handle command
         log.info("Bot command called by " + message.author.name + ". Full command: " + message.content)
         
-        try:        #Get server config
-            server = config.servers[message.guild.id]
-        except KeyError:    #Server not found, create one
-            createServerConfig(message.guild)
-
-            log.error("Unrecognized server: " + str(message.guild.id))
-            log.info("Creating info for server " + str(message.guild.id) + ".")
-
-            server = config.servers[message.guild.id]
+        server = server_.find(message.guild)
 
         rawCommand = message.content[len(bot.prefix):].lower()    #Take prefix out
         
@@ -100,14 +92,5 @@ async def on_message(message):  #Handle messages
 @bot.client.event
 async def on_guild_join(guild):         #Bot joined a new guild
     #Generate server config
-    createServerConfig(guild)
-    
+    server_.find(guild)
 
-def createServerConfig(guild):
-    params = {"id": guild.id, "name": guild.name, "lotto-channel": 0, "rate": 0, "rate-list": {}, "lotto-parameters": [["lose"], [1000000]]}
-    tmpServer = server_.server(params)
-
-    tmpServer.save()
-    config.servers[guild.id] = tmpServer
-
-    log.info("New server: " + guild.id + " (" + guild.name + ")")
