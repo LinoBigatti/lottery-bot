@@ -1,4 +1,4 @@
-# .gitgnore
+# .gitignore
 
 # ---------------------
 # From github/gitignore
@@ -148,3 +148,6 @@ cython_debug/
 # ----------------
 
 data/servers/*.json
+
+# VIM stuff ig
+*.swp
